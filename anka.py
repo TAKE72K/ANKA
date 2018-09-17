@@ -37,7 +37,7 @@ def new_anka(bot,update):
     if update.message.chat_id>0:
         return
     sender=update.message.from_user
-    this_chat=get_chat(chat_id=update.message.chat_id)
+    this_chat=bot.get_chat(chat_id=update.message.chat_id)
     start_me=InlineKeyboardMarkup([[InlineKeyboardButton(text='start me in PM',url='https://telegram.me/Chiahayabot?start=hello')]])
     try:
         bot.send_message(chat_id=sender.id,text='{}開始安價囉'.format(this_chat.title))
