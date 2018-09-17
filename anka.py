@@ -32,11 +32,15 @@ def start(bot,update):
     bot.send_message(chat_id=update.message.chat_id,text=self_intro)
 
 def new_anka(bot,update):
-    #if get 'anka' ,pm command sender
+#if get 'anka' ,pm command sender
+    #if a private chat
+    if update.message.chat_id>0:
+        return
     sender=update.message.from_user
+    this_chat=get_chat(chat_id=update.message.chat_id)
     start_me=InlineKeyboardMarkup([[InlineKeyboardButton(text='start me in PM',url='https://telegram.me/Chiahayabot?start=hello')]])
     try:
-        bot.send_message(chat_id=sender.id,text='')
+        bot.send_message(chat_id=sender.id,text='{}開始安價囉'.format(this_chat.title))
     except:
         bot.send_message(chat_id=update.message.chat_id,text='start me!')
 
