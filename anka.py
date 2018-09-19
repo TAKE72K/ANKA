@@ -7,7 +7,9 @@ import logging
 #python telegram bot 
 from telegram import Bot, Chat
 from telegram import InlineKeyboardMarkup,InlineKeyboardButton
-from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler
+#self define module
+import ankabase
 
 token = os.environ['TELEGRAM_TOKEN']
 updater = Updater(token,workers=16)
@@ -61,8 +63,19 @@ def new_anka_init(userid,chatid):
     dic={}
     dic['host']=userid
     dic['place']=chatid
+    dic['ankaid']=0
+    #def 0 to be processing
+    ankabase.insert_data('anka',dic)
     return
 
+#callback reaction
+def callback_re(bot,update):
+    query = update.callback_query
+    query_text=query.data
+    query_sender=query.from_user
+    
+    def set_title():
+        pass
 
 def main():
     # Get the dispatcher to register handlers
@@ -70,6 +83,8 @@ def main():
     #Bot Command
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("newanka", new_anka))
+    #recieve callback data
+    db.add_handler(CallbackQueryHandler(callback_re))
     # log all errors
     dp.add_error_handler(error)
 

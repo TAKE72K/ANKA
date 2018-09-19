@@ -13,3 +13,8 @@ temp=Template(url)
 mongo_url=temp.substitute(dbuser=mongo_us,dbpassword=mongo_ps)
 client = MongoClient(mongo_url)
 db = client['chiahaya']
+
+def insert_data(Collection,dict):
+    op_ins=db[Collection]
+    op_ins.insert_one(dict)
+    return
