@@ -86,7 +86,7 @@ def new_anka(bot,update):
     
     keyboard=[[
                 InlineKeyboardButton(text='設定標題',
-                                    callback_data='set_title{}'.format(str(where_anka)))
+                                    callback_data='set_title')
             ]]
     rplym=InlineKeyboardMarkup(keyboard)
     bot.send_message(chat_id=sender.id,text='設個標題~~',reply_markup=rplym)
