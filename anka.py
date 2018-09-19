@@ -39,7 +39,7 @@ def new_anka_init(userid,chatid):
     dic={}
     dic['host']=userid
     dic['place']=chatid
-    dic['ankaid']=0
+    dic['ankaid']=1
     #def 0 to be processing
     ak.insert_data('anka',dic)
     return
@@ -84,10 +84,7 @@ def new_anka(bot,update):
     where_anka=this_chat.id
     new_anka_init(who_start,where_anka)
     
-    keyboard=[[
-                InlineKeyboardButton(text='設定標題',
-                                    callback_data='set_title')
-            ]]
+    keyboard=[[InlineKeyboardButton(text='設定標題',callback_data='set_title')]]
     rplym=InlineKeyboardMarkup(keyboard)
     bot.send_message(chat_id=sender.id,text='設個標題~~',reply_markup=rplym)
 
