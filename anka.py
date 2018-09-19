@@ -109,6 +109,7 @@ def message_callback(bot,update):
         if action['type']=='set_title':
             title=msg.text
             anka_title_init(title,action['place'])
+            bot.send_message(chat_id=action['place'],text='{}開始了安價:{}'.format(msg.from_user.first_name,title))
             del reply_dic[msg.reply_to_message.message_id]
         
 
