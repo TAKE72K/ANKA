@@ -5,6 +5,7 @@ cryptography==2.3.1
 future==0.16.0
 idna==2.7
 pycparser==2.18
+pymongo==3.7.1
 python-telegram-bot==11.1.0
 six==1.11.0
 wincertstore==0.2
