@@ -40,7 +40,7 @@ def new_anka_init(userid,chatid):
     dic={}
     dic['host']=userid
     dic['place']=chatid
-    dic['ankaid']=1
+    dic['ankaid']=0
     #def 0 to be processing
     ak.insert_data('anka',dic)
     return
