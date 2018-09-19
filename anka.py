@@ -36,16 +36,32 @@ def new_anka(bot,update):
     #if a private chat
     if update.message.chat_id>0:
         return
+    self_info=bot.get_me()
     sender=update.message.from_user
     this_chat=bot.get_chat(chat_id=update.message.chat_id)
-    start_me=InlineKeyboardMarkup([[InlineKeyboardButton(text='start me in PM',url='https://telegram.me/Chiahayabot?start=hello')]])
+    start_me=InlineKeyboardMarkup([[InlineKeyboardButton(text='start me in PM',
+                                    url='https://telegram.me/{}?start=hello'.format(self_info.username))]])
+    #comfirm if there is a processing anka in this chat
+    
     try:
         bot.send_message(chat_id=sender.id,text='{}開始安價囉'.format(this_chat.title))
     except:
-        bot.send_message(chat_id=update.message.chat_id,text='start me!')
+        bot.send_message(chat_id=this_chat.id,text='start me!')
+        return
+    
+    who_start=sender.id
+    where_anka=this_chat.id
+    new_anka_init(who_start,where_anka)
+    
+    keyboard=[[InlineKeyboardButton(text='設定標題',callback_data='set_title{}'.format(str(this_chat.id)))]]
+    rplym=InlineKeyboardMarkup(keyboard)
+    bot.send_message(chat_id=sender.id,text='設個標題ㄅ',reply_markup=rplym)
 
-
-
+def new_anka_init(userid,chatid):
+    dic={}
+    dic['host']=userid
+    dic['place']=chatid
+    return
 
 
 def main():
