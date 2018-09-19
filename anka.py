@@ -35,7 +35,16 @@ def check_hosting(chat_id):
         if i['ankaid']==0:
             return i['title']#there's a progressing anka
     return False
-    
+
+def check_host(userid):
+    check=ak.get_doc(Collection='anka',
+                    pipeline={'host':userid,'ankaid':0}
+    )
+    if check is not None:
+        return check[0]['place']
+    else:
+        return False 
+
 def new_anka_init(userid,chatid):
     dic={}
     dic['host']=userid
@@ -98,7 +107,17 @@ def new_anka(bot,update):
     action={'host':who_start,'place':where_anka,'type':'set_title'}
     reply_dic[titleid.message_id]=action
     
-
+def anka_article(bot,update):
+    #check PM
+    if update.message.chat_id<0:
+        bot.send_message(chat_id=update.message.chat_id,text='這個指令只能在私訊使用')
+        return
+    #check host
+    if check_host(update.message.from_user.id):
+        bot.send_message(chat_id=update.message.from_user.id,text='請輸入內容',reply_markup=ForceReply())
+        return
+    
+    
 #message handlers
 def message_callback(bot,update):
     global reply_dic
@@ -109,6 +128,7 @@ def message_callback(bot,update):
         if action['type']=='set_title':
             title=msg.text
             anka_title_init(title,action['place'])
+            bot.send_message(chat_id=action['host'],text='標題{}已設置， /article-來輸入文章'.format(title))
             bot.send_message(chat_id=action['place'],text='{}開始了安價:{}'.format(msg.from_user.first_name,title))
             del reply_dic[msg.reply_to_message.message_id]
         
@@ -133,6 +153,7 @@ def main():
     #Bot Command
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("newanka", new_anka))
+    dp.add_handler(CommandHandler("article", anka_article))
     #recieve callback data
     dp.add_handler(CallbackQueryHandler(callback_re))
     #recieve message
