@@ -9,7 +9,7 @@ from telegram import Bot, Chat
 from telegram import InlineKeyboardMarkup,InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler
 #self define module
-import ankabase
+import ankabase as ak
 
 token = os.environ['TELEGRAM_TOKEN']
 updater = Updater(token,workers=16)
@@ -22,6 +22,27 @@ def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
 
+    
+    
+#FUNCTION
+def check_hosting(chat_id):
+    check=ak.get_doc(Collection='anka',
+                pipeline={'place':chat_id})
+    if check is None:
+        return False
+    for i in check:
+        if i['ankaid']==0:
+            return True#there's a progressing anka
+    return False
+    
+def new_anka_init(userid,chatid):
+    dic={}
+    dic['host']=userid
+    dic['place']=chatid
+    dic['ankaid']=0
+    #def 0 to be processing
+    ak.insert_data('anka',dic)
+    return
 #COMMAND FUNCTION
 def start(bot,update):
     #enable PM
@@ -38,6 +59,14 @@ def new_anka(bot,update):
     #if a private chat
     if update.message.chat_id>0:
         return
+    
+    #check if there is a anka be hosting
+    if check_hosting(update.message.chat_id):
+        bot.send_message(chat_id=update.message.chat_id,
+        text='本群已有正在進行的安價')
+        return
+    
+    #start a new one
     self_info=bot.get_me()
     sender=update.message.from_user
     this_chat=bot.get_chat(chat_id=update.message.chat_id)
@@ -59,14 +88,6 @@ def new_anka(bot,update):
     rplym=InlineKeyboardMarkup(keyboard)
     bot.send_message(chat_id=sender.id,text='設個標題ㄅ',reply_markup=rplym)
 
-def new_anka_init(userid,chatid):
-    dic={}
-    dic['host']=userid
-    dic['place']=chatid
-    dic['ankaid']=0
-    #def 0 to be processing
-    ankabase.insert_data('anka',dic)
-    return
 
 #callback reaction
 def callback_re(bot,update):

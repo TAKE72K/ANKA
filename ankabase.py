@@ -18,3 +18,14 @@ def insert_data(Collection,dict):
     op_ins=db[Collection]
     op_ins.insert_one(dict)
     return
+
+def get_doc(Collection,pipeline):
+    op_ins=db[Collection]
+    ins=op_ins.find(pipeline)
+    if ins is None:
+        return None
+    else:
+        result=[]
+        for i in ins:
+            result.append(i)
+            return result
