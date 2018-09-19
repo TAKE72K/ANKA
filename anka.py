@@ -6,7 +6,7 @@ import os
 import logging
 #python telegram bot 
 from telegram import Bot, Chat
-from telegram import InlineKeyboardMarkup,InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler
 #self define module
 import ankabase as ak
@@ -84,9 +84,12 @@ def new_anka(bot,update):
     where_anka=this_chat.id
     new_anka_init(who_start,where_anka)
     
-    keyboard=[[InlineKeyboardButton(text='設定標題',callback_data='set_title{}'.format(str(this_chat.id)))]]
+    keyboard=[[
+                InlineKeyboardButton(text='設定標題',
+                                    callback_data='set_title{}'.format(str(where_anka)))
+            ]]
     rplym=InlineKeyboardMarkup(keyboard)
-    bot.send_message(chat_id=sender.id,text='設個標題ㄅ',reply_markup=rplym)
+    bot.send_message(chat_id=sender.id,text='設個標題~~',reply_markup=rplym)
 
 
 #callback reaction
@@ -95,8 +98,13 @@ def callback_re(bot,update):
     query_text=query.data
     query_sender=query.from_user
     
-    def set_title():
-        pass
+    def set_title(place):
+        bot.edit_message_text(text="請輸入標題",
+                              chat_id=query.message.chat_id,
+                              message_id=query.message.message_id,
+                              reply_markup=ForceReply())
+    if query_text.find('title')!=-1:
+        set_title(0)
 
 def main():
     # Get the dispatcher to register handlers
