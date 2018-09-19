@@ -29,3 +29,15 @@ def get_doc(Collection,pipeline):
         for i in ins:
             result.append(i)
             return result
+            
+def modify_doc(Collection,pipeline,key,value):
+    op_ins=db[Collection]
+
+    ins=op_ins.find_one(pipeline)
+    if ins is not None:
+        op_ins.update_one(pipeline,
+        {'$set':{key:update_value}})
+    else:
+        dict=pipeline
+        pipeline[key]=update_value
+        op_ins.insert_one(dict)

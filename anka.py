@@ -22,7 +22,8 @@ def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
 
-    
+#global arg
+reply_dic={}
     
 #FUNCTION
 def check_hosting(chat_id):
@@ -42,6 +43,10 @@ def new_anka_init(userid,chatid):
     dic['ankaid']=1
     #def 0 to be processing
     ak.insert_data('anka',dic)
+    return
+
+def anka_title_init(title,chatid):
+    ak.modify_doc('anka',{'place':chatid,'ankaid':0},'title',title)
     return
 #COMMAND FUNCTION
 def start(bot,update):
@@ -70,24 +75,42 @@ def new_anka(bot,update):
     self_info=bot.get_me()
     sender=update.message.from_user
     this_chat=bot.get_chat(chat_id=update.message.chat_id)
-    start_me=InlineKeyboardMarkup([[InlineKeyboardButton(text='start me in PM',
+    start_me=InlineKeyboardMarkup([[InlineKeyboardButton(text='start me!',
                                     url='https://telegram.me/{}?start=hello'.format(self_info.username))]])
     #comfirm if there is a processing anka in this chat
     
     try:
         bot.send_message(chat_id=sender.id,text='{}開始安價囉'.format(this_chat.title))
     except:
-        bot.send_message(chat_id=this_chat.id,text='start me!')
+        bot.send_message(chat_id=this_chat.id,text='',reply_markup=start_me)
         return
     
     who_start=sender.id
     where_anka=this_chat.id
     new_anka_init(who_start,where_anka)
-    
+    '''
     keyboard=[[InlineKeyboardButton(text='設定標題',callback_data='set_title')]]
     rplym=InlineKeyboardMarkup(keyboard)
     bot.send_message(chat_id=sender.id,text='設個標題~~',reply_markup=rplym)
+    '''
+    titleid=bot.send_message(chat_id=sender.id,text='設個標題~~',reply_markup=ForceReply())
+    global reply_dic
+    action={'host':who_start,'place':where_anka,'type':'set_title'}
+    reply_dic[titleid.message_id]=action
+    
 
+#message handlers
+def message_callback(bot,update):
+    global reply_dic
+    
+    msg=update.message
+    if msg.reply_to_message is not None:
+        action=reply_dic[msg.reply_to_message.message_id]
+        if action['type']=='set_title':
+            title=msg.text
+            anka_title_init(title,action['place'])
+            del reply_dic[msg.reply_to_message.message_id]
+        
 
 #callback reaction
 def callback_re(bot,update):
@@ -111,6 +134,8 @@ def main():
     dp.add_handler(CommandHandler("newanka", new_anka))
     #recieve callback data
     dp.add_handler(CallbackQueryHandler(callback_re))
+    #recieve message
+    dp.add_handler(MessageHandler())
     # log all errors
     dp.add_error_handler(error)
 
