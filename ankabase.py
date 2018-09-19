@@ -36,8 +36,8 @@ def modify_doc(Collection,pipeline,key,value):
     ins=op_ins.find_one(pipeline)
     if ins is not None:
         op_ins.update_one(pipeline,
-        {'$set':{key:update_value}})
+        {'$set':{key:value}})
     else:
         dict=pipeline
-        pipeline[key]=update_value
+        pipeline[key]=value
         op_ins.insert_one(dict)
