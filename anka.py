@@ -7,7 +7,7 @@ import logging
 #python telegram bot 
 from telegram import Bot, Chat
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ForceReply
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler, Filters
 #self define module
 import ankabase as ak
 
@@ -33,7 +33,7 @@ def check_hosting(chat_id):
         return False
     for i in check:
         if i['ankaid']==0:
-            return True#there's a progressing anka
+            return i['title']#there's a progressing anka
     return False
     
 def new_anka_init(userid,chatid):
@@ -68,7 +68,7 @@ def new_anka(bot,update):
     #check if there is a anka be hosting
     if check_hosting(update.message.chat_id):
         bot.send_message(chat_id=update.message.chat_id,
-        text='本群已有正在進行的安價')
+        text='本群已有正在進行的安價{}'.format(check_hosting(update.message.chat_id)))
         return
     
     #start a new one
@@ -136,7 +136,7 @@ def main():
     #recieve callback data
     dp.add_handler(CallbackQueryHandler(callback_re))
     #recieve message
-    dp.add_handler(MessageHandler())
+    dp.add_handler(MessageHandler(Filters.all,message_callback))
     # log all errors
     dp.add_error_handler(error)
 
