@@ -28,7 +28,7 @@ def get_doc(Collection,pipeline):
         result=[]
         for i in ins:
             result.append(i)
-            return result
+        return result
             
 def modify_doc(Collection,pipeline,key,value):
     op_ins=db[Collection]
