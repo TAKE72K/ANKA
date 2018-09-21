@@ -57,6 +57,14 @@ def new_anka_init(userid,chatid):
 def anka_title_init(title,chatid):
     ak.modify_doc('anka',{'place':chatid,'ankaid':0},'title',title)
     return
+
+def anka_article_input(text,userid):
+    doc=ak.get_doc(Collection='anka',
+                    pipeline={'host':userid,'ankaid':0}
+    )
+    
+    
+
 #COMMAND FUNCTION
 def start(bot,update):
     #enable PM
@@ -114,9 +122,15 @@ def anka_article(bot,update):
         return
     #check host
     if check_host(update.message.from_user.id):
-        bot.send_message(chat_id=update.message.from_user.id,text='請輸入內容',reply_markup=ForceReply())
+        input_article=bot.send_message(chat_id=update.message.from_user.id,text='請輸入內容',reply_markup=ForceReply())
+        global reply_dic
+        action={'host':update.message.from_user.id,
+                'place':check_host(update.message.from_user.id),
+                'type':'input_article'}
+        reply_dic[input_article.message_id]=action
         return
-    
+    else:
+        bot.send_message(chat_id=update.message.from_user.id,text='姆咪')
     
 #message handlers
 def message_callback(bot,update):
@@ -132,6 +146,9 @@ def message_callback(bot,update):
             bot.send_message(chat_id=action['place'],text='{}開始了安價:{}'.format(msg.from_user.first_name,title))
             del reply_dic[msg.reply_to_message.message_id]
         
+        if action['type']=='input_article':
+            article=msg.text
+            
 
 #callback reaction
 def callback_re(bot,update):
